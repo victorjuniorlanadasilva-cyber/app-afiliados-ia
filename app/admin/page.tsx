@@ -72,13 +72,13 @@ export default function AdminPage() {
       }
 
       setForm({
-  name: data.name || "",
-  price: "",
-  image: data.image || "",
-  link: data.link || sourceUrl,
-  category: data.category || "",
-  description: data.description || "",
-});
+        name: data.name || "",
+        price: "",
+        image: data.image || "",
+        link: data.link || sourceUrl,
+        category: data.category || "",
+        description: data.description || "",
+      });
     } catch (error) {
       console.error(error);
       alert("Erro ao tentar preencher automaticamente.");
@@ -137,6 +137,7 @@ export default function AdminPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
+          {/* FORM */}
           <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-4">
             <h2 className="text-xl font-semibold">Adicionar produto</h2>
 
@@ -214,12 +215,17 @@ export default function AdminPage() {
             </button>
           </div>
 
+          {/* LISTA */}
           <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-            <h2 className="text-xl font-semibold mb-4">Produtos cadastrados</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Produtos cadastrados
+            </h2>
 
             <div className="space-y-4 max-h-[600px] overflow-y-auto">
               {products.length === 0 && (
-                <p className="text-gray-500">Nenhum produto cadastrado ainda.</p>
+                <p className="text-gray-500">
+                  Nenhum produto cadastrado ainda.
+                </p>
               )}
 
               {products.map((product) => (
@@ -227,10 +233,18 @@ export default function AdminPage() {
                   key={product.id}
                   className="bg-black border border-zinc-800 rounded-xl p-4 space-y-2"
                 >
-                  <h3 className="font-semibold text-white">{product.name}</h3>
-                  <p className="text-pink-400 font-bold">{product.price}</p>
-                  <p className="text-gray-400 text-sm">{product.category}</p>
-                  <p className="text-gray-500 text-sm">{product.description}</p>
+                  <h3 className="font-semibold text-white">
+                    {product.name}
+                  </h3>
+                  <p className="text-pink-400 font-bold">
+                    {product.price}
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    {product.category}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    {product.description}
+                  </p>
 
                   {product.image && (
                     <img
@@ -240,14 +254,41 @@ export default function AdminPage() {
                     />
                   )}
 
-                  <a
-                    href={product.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-2 bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-xl"
-                  >
-                    Abrir link
-                  </a>
+                  <div className="flex gap-2 mt-2">
+                    <a
+                      href={product.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-xl"
+                    >
+                      Abrir link
+                    </a>
+
+                    <button
+                      onClick={async () => {
+                        const confirmDelete = confirm(
+                          "Quer apagar esse produto?"
+                        );
+                        if (!confirmDelete) return;
+
+                        const { error } = await supabase
+                          .from("products")
+                          .delete()
+                          .eq("id", product.id);
+
+                        if (error) {
+                          console.error(error);
+                          alert("Erro ao apagar produto.");
+                          return;
+                        }
+
+                        loadProducts();
+                      }}
+                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-white"
+                    >
+                      Apagar
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
