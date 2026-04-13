@@ -162,7 +162,7 @@ export default function Home() {
           onClick={() =>
             supabase.auth.signInWithOAuth({
               provider: "google",
-              options: { redirectTo: "http://localhost:3000" },
+              options: { redirectTo: window.location.origin },
             })
           }
           className="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-xl text-white font-semibold"
