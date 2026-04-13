@@ -13,7 +13,12 @@ type Product = {
   description: string;
 };
 
+const ADMIN_EMAIL = "victorjuniorlanadasilva@gmail.com";
+
 export default function AdminPage() {
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [sourceUrl, setSourceUrl] = useState("");
@@ -43,8 +48,35 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    loadProducts();
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+
+      setUser(data.user ?? null);
+      setAuthLoading(false);
+    };
+
+    getUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
+
+  useEffect(() => {
+    if (user?.email === ADMIN_EMAIL) {
+      loadProducts();
+    }
+  }, [user]);
 
   const handleExtract = async () => {
     if (!sourceUrl.trim()) {
@@ -126,6 +158,53 @@ export default function AdminPage() {
     loadProducts();
   };
 
+  if (authLoading) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p>Carregando...</p>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center max-w-md w-full">
+          <h1 className="text-2xl font-bold text-pink-500 mb-3">Área restrita</h1>
+          <p className="text-gray-300 mb-5">
+            Você precisa entrar com sua conta para acessar o painel admin.
+          </p>
+
+          <button
+            onClick={() =>
+              supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: { redirectTo: `${window.location.origin}/admin` },
+              })
+            }
+            className="bg-pink-500 hover:bg-pink-600 px-5 py-3 rounded-xl text-white font-semibold"
+          >
+            Entrar com Google
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  if (user.email !== ADMIN_EMAIL) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center max-w-md w-full">
+          <h1 className="text-2xl font-bold text-red-500 mb-3">Acesso negado</h1>
+          <p className="text-gray-300">
+            Esta área é privada. Sua conta não tem permissão para acessar o painel.
+          </p>
+          <p className="text-gray-500 text-sm mt-3">{user.email}</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-black text-white p-6">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -134,10 +213,10 @@ export default function AdminPage() {
           <p className="text-gray-400 mt-2">
             Cadastre produtos que a IA poderá indicar no chat.
           </p>
+          <p className="text-gray-500 text-sm mt-1">Logado como: {user.email}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* FORM */}
           <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-4">
             <h2 className="text-xl font-semibold">Adicionar produto</h2>
 
@@ -215,17 +294,12 @@ export default function AdminPage() {
             </button>
           </div>
 
-          {/* LISTA */}
           <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-            <h2 className="text-xl font-semibold mb-4">
-              Produtos cadastrados
-            </h2>
+            <h2 className="text-xl font-semibold mb-4">Produtos cadastrados</h2>
 
             <div className="space-y-4 max-h-[600px] overflow-y-auto">
               {products.length === 0 && (
-                <p className="text-gray-500">
-                  Nenhum produto cadastrado ainda.
-                </p>
+                <p className="text-gray-500">Nenhum produto cadastrado ainda.</p>
               )}
 
               {products.map((product) => (
@@ -233,18 +307,10 @@ export default function AdminPage() {
                   key={product.id}
                   className="bg-black border border-zinc-800 rounded-xl p-4 space-y-2"
                 >
-                  <h3 className="font-semibold text-white">
-                    {product.name}
-                  </h3>
-                  <p className="text-pink-400 font-bold">
-                    {product.price}
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    {product.category}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    {product.description}
-                  </p>
+                  <h3 className="font-semibold text-white">{product.name}</h3>
+                  <p className="text-pink-400 font-bold">{product.price}</p>
+                  <p className="text-gray-400 text-sm">{product.category}</p>
+                  <p className="text-gray-500 text-sm">{product.description}</p>
 
                   {product.image && (
                     <img
@@ -266,9 +332,7 @@ export default function AdminPage() {
 
                     <button
                       onClick={async () => {
-                        const confirmDelete = confirm(
-                          "Quer apagar esse produto?"
-                        );
+                        const confirmDelete = confirm("Quer apagar esse produto?");
                         if (!confirmDelete) return;
 
                         const { error } = await supabase
