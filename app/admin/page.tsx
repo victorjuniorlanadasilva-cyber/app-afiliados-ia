@@ -160,8 +160,11 @@ export default function AdminPage() {
 
   if (authLoading) {
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p>Carregando...</p>
+      <main className="min-h-screen bg-black text-yellow-100 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-full border-4 border-yellow-500/20 border-t-yellow-500 animate-spin mx-auto" />
+          <p>Carregando painel...</p>
+        </div>
       </main>
     );
   }
@@ -169,10 +172,12 @@ export default function AdminPage() {
   if (!user) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center max-w-md w-full">
-          <h1 className="text-2xl font-bold text-pink-500 mb-3">Área restrita</h1>
-          <p className="text-gray-300 mb-5">
-            Você precisa entrar com sua conta para acessar o painel admin.
+        <div className="w-full max-w-md rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-zinc-950 via-black to-zinc-900 p-8 shadow-2xl text-center">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+            DarianIA Admin
+          </h1>
+          <p className="mt-3 text-zinc-300">
+            Entre com sua conta para acessar o painel.
           </p>
 
           <button
@@ -182,7 +187,7 @@ export default function AdminPage() {
                 options: { redirectTo: `${window.location.origin}/admin` },
               })
             }
-            className="bg-pink-500 hover:bg-pink-600 px-5 py-3 rounded-xl text-white font-semibold"
+            className="mt-6 rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-600 px-6 py-4 font-bold text-black transition hover:scale-[1.01]"
           >
             Entrar com Google
           </button>
@@ -194,164 +199,204 @@ export default function AdminPage() {
   if (user.email !== ADMIN_EMAIL) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center max-w-md w-full">
-          <h1 className="text-2xl font-bold text-red-500 mb-3">Acesso negado</h1>
-          <p className="text-gray-300">
-            Esta área é privada. Sua conta não tem permissão para acessar o painel.
+        <div className="w-full max-w-md rounded-3xl border border-red-500/20 bg-zinc-950 p-8 text-center">
+          <h1 className="text-3xl font-bold text-red-500">Acesso negado</h1>
+          <p className="mt-3 text-zinc-300">
+            Sua conta não tem permissão para entrar no admin.
           </p>
-          <p className="text-gray-500 text-sm mt-3">{user.email}</p>
+          <p className="mt-3 text-sm text-zinc-500">{user.email}</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-pink-500">Painel Cérebro 🧠</h1>
-          <p className="text-gray-400 mt-2">
-            Cadastre produtos que a IA poderá indicar no chat.
-          </p>
-          <p className="text-gray-500 text-sm mt-1">Logado como: {user.email}</p>
+    <main className="min-h-screen bg-black text-white p-4 md:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="rounded-3xl border border-yellow-500/20 bg-gradient-to-r from-zinc-950 via-black to-zinc-900 p-6 shadow-2xl">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+                DarianIA Admin
+              </h1>
+              <p className="mt-2 text-zinc-400">
+                Painel premium para cadastrar e gerenciar produtos.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-yellow-500/10 bg-yellow-500/5 px-4 py-3 text-sm text-zinc-300">
+              Logado como: <span className="text-yellow-300">{user.email}</span>
+            </div>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-4">
-            <h2 className="text-xl font-semibold">Adicionar produto</h2>
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-zinc-950 to-zinc-900 p-6 shadow-xl">
+            <h2 className="mb-5 text-2xl font-semibold text-yellow-200">
+              Adicionar produto
+            </h2>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-yellow-500/10 bg-black/30 p-4">
+                <label className="mb-2 block text-sm text-zinc-400">
+                  Link para preenchimento automático
+                </label>
+
+                <div className="flex flex-col gap-3 md:flex-row">
+                  <input
+                    value={sourceUrl}
+                    onChange={(e) => setSourceUrl(e.target.value)}
+                    placeholder="Cole o link do produto aqui"
+                    className="flex-1 rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
+                  />
+
+                  <button
+                    onClick={handleExtract}
+                    disabled={extracting}
+                    className="rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-600 px-5 py-3 font-bold text-black disabled:opacity-60"
+                  >
+                    {extracting
+                      ? "Preenchendo..."
+                      : "Preencher automaticamente"}
+                  </button>
+                </div>
+              </div>
+
               <input
-                value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
-                placeholder="Cole o link do produto aqui"
-                className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Nome do produto"
+                className="w-full rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
+              />
+
+              <input
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="Preço"
+                className="w-full rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
+              />
+
+              <input
+                name="image"
+                value={form.image}
+                onChange={handleChange}
+                placeholder="URL da imagem"
+                className="w-full rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
+              />
+
+              <input
+                name="link"
+                value={form.link}
+                onChange={handleChange}
+                placeholder="Link de afiliado"
+                className="w-full rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
+              />
+
+              <input
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                placeholder="Categoria"
+                className="w-full rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
+              />
+
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Descrição"
+                className="min-h-[140px] w-full rounded-2xl border border-yellow-500/15 bg-zinc-950 px-4 py-3 outline-none placeholder:text-zinc-500"
               />
 
               <button
-                onClick={handleExtract}
-                disabled={extracting}
-                className="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl text-white font-semibold"
+                onClick={handleSubmit}
+                disabled={loading}
+                className="rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-600 px-6 py-4 font-bold text-black disabled:opacity-60"
               >
-                {extracting ? "Preenchendo..." : "Preencher automaticamente"}
+                {loading ? "Salvando..." : "Salvar produto"}
               </button>
             </div>
-
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Nome do produto"
-              className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none"
-            />
-
-            <input
-              name="price"
-              value={form.price}
-              onChange={handleChange}
-              placeholder="Preço"
-              className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none"
-            />
-
-            <input
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              placeholder="URL da imagem"
-              className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none"
-            />
-
-            <input
-              name="link"
-              value={form.link}
-              onChange={handleChange}
-              placeholder="Link de afiliado"
-              className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none"
-            />
-
-            <input
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              placeholder="Categoria"
-              className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none"
-            />
-
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Descrição"
-              className="w-full bg-black border border-zinc-700 rounded-xl p-3 outline-none min-h-[120px]"
-            />
-
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-pink-500 hover:bg-pink-600 px-5 py-3 rounded-xl text-white font-semibold"
-            >
-              {loading ? "Salvando..." : "Salvar produto"}
-            </button>
           </div>
 
-          <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-            <h2 className="text-xl font-semibold mb-4">Produtos cadastrados</h2>
+          <div className="rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-zinc-950 to-zinc-900 p-6 shadow-xl">
+            <h2 className="mb-5 text-2xl font-semibold text-yellow-200">
+              Produtos cadastrados
+            </h2>
 
-            <div className="space-y-4 max-h-[600px] overflow-y-auto">
+            <div className="space-y-4 max-h-[800px] overflow-y-auto pr-1">
               {products.length === 0 && (
-                <p className="text-gray-500">Nenhum produto cadastrado ainda.</p>
+                <p className="text-zinc-500">Nenhum produto cadastrado ainda.</p>
               )}
 
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-black border border-zinc-800 rounded-xl p-4 space-y-2"
+                  className="rounded-3xl border border-yellow-500/15 bg-black/40 p-4 shadow-lg"
                 >
-                  <h3 className="font-semibold text-white">{product.name}</h3>
-                  <p className="text-pink-400 font-bold">{product.price}</p>
-                  <p className="text-gray-400 text-sm">{product.category}</p>
-                  <p className="text-gray-500 text-sm">{product.description}</p>
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    {product.image && (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="h-24 w-full rounded-2xl object-cover md:w-40"
+                      />
+                    )}
 
-                  {product.image && (
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-40 object-cover rounded-xl"
-                    />
-                  )}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-yellow-100">
+                        {product.name}
+                      </h3>
 
-                  <div className="flex gap-2 mt-2">
-                    <a
-                      href={product.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-xl"
-                    >
-                      Abrir link
-                    </a>
+                      <p className="mt-1 text-xl font-bold text-yellow-400">
+                        {product.price}
+                      </p>
 
-                    <button
-                      onClick={async () => {
-                        const confirmDelete = confirm("Quer apagar esse produto?");
-                        if (!confirmDelete) return;
+                      <p className="mt-1 text-sm text-zinc-400">
+                        {product.category}
+                      </p>
 
-                        const { error } = await supabase
-                          .from("products")
-                          .delete()
-                          .eq("id", product.id);
+                      <p className="mt-2 text-sm text-zinc-500">
+                        {product.description}
+                      </p>
 
-                        if (error) {
-                          console.error(error);
-                          alert("Erro ao apagar produto.");
-                          return;
-                        }
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <a
+                          href={product.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-600 px-4 py-2 font-semibold text-black"
+                        >
+                          Abrir link
+                        </a>
 
-                        loadProducts();
-                      }}
-                      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl text-white"
-                    >
-                      Apagar
-                    </button>
+                        <button
+                          onClick={async () => {
+                            const confirmDelete = confirm(
+                              "Quer apagar esse produto?"
+                            );
+                            if (!confirmDelete) return;
+
+                            const { error } = await supabase
+                              .from("products")
+                              .delete()
+                              .eq("id", product.id);
+
+                            if (error) {
+                              console.error(error);
+                              alert("Erro ao apagar produto.");
+                              return;
+                            }
+
+                            loadProducts();
+                          }}
+                          className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-2 font-semibold text-red-300"
+                        >
+                          Apagar
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
