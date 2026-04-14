@@ -64,7 +64,7 @@ export default function Home() {
         {
           role: "bot",
           content:
-            "Olá! Eu sou a DarianIA ✨\n\nSua IA para encontrar produtos e economizar.\n\nMe diga o que você procura e eu vou tentar achar uma opção com ótimo custo-benefício para você.",
+            "Olá! Eu sou o DarianIA ✨\n\nSua IA para encontrar produtos e economizar.\n\nMe diga o que você procura e eu vou tentar achar uma opção com ótimo custo-benefício para você.",
         },
       ]);
     }
@@ -171,7 +171,7 @@ export default function Home() {
         <div className="w-full max-w-md rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-zinc-950 via-black to-zinc-900 p-8 shadow-2xl text-center gold-glow">
           <div className="flex flex-col items-center mb-6">
             <img
-              src="/logo.png"
+              src="https://i.postimg.cc/gJnBKrYr/logo-png.png"
               alt="DarianIA"
               className="w-20 h-20 object-contain mb-4"
             />
