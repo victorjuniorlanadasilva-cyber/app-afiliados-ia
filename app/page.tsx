@@ -168,13 +168,18 @@ export default function Home() {
   if (!user) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="w-full max-w-md rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-zinc-950 via-black to-zinc-900 p-8 shadow-2xl">
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-              DarianIA
-            </h1>
-            <p className="mt-3 text-zinc-300">
-              Sua IA para encontrar produtos e economizar.
+        <div className="w-full max-w-md rounded-3xl border border-yellow-500/20 bg-gradient-to-br from-zinc-950 via-black to-zinc-900 p-8 shadow-2xl text-center gold-glow">
+          <div className="flex flex-col items-center mb-6">
+            <img
+              src="/logo.png"
+              alt="DarianIA"
+              className="w-20 h-20 object-contain mb-4"
+            />
+
+            <h1 className="text-4xl font-bold gold-text">DarianIA</h1>
+
+            <p className="mt-2 text-zinc-400 text-sm">
+              Sua IA para encontrar produtos e economizar
             </p>
           </div>
 
@@ -185,7 +190,7 @@ export default function Home() {
                 options: { redirectTo: window.location.origin },
               })
             }
-            className="w-full rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-600 px-6 py-4 text-base font-bold text-black transition hover:scale-[1.01] hover:from-yellow-300 hover:to-amber-500"
+            className="w-full rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-600 px-6 py-4 text-base font-bold text-black transition hover:scale-[1.02]"
           >
             Entrar com Google
           </button>
@@ -197,24 +202,31 @@ export default function Home() {
   return (
     <main className="h-screen bg-black text-white">
       <div className="mx-auto flex h-full max-w-6xl flex-col p-3 md:p-5">
-        <div className="mb-3 rounded-3xl border border-yellow-500/20 bg-gradient-to-r from-zinc-950 via-black to-zinc-900 px-5 py-4 shadow-xl">
+        <div className="mb-3 rounded-3xl border border-yellow-500/20 bg-gradient-to-r from-zinc-950 via-black to-zinc-900 px-5 py-4 shadow-xl gold-glow">
           <div className="flex items-center justify-between gap-3">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-                DarianIA
-              </h1>
-              <p className="text-sm text-zinc-400">
-                Sua IA para encontrar produtos e economizar.
-              </p>
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo.png"
+                alt="DarianIA"
+                className="w-10 h-10 object-contain"
+              />
+
+              <div>
+                <h1 className="text-2xl font-bold gold-text">DarianIA</h1>
+                <p className="text-xs text-zinc-400">
+                  Sua IA para encontrar produtos e economizar
+                </p>
+              </div>
             </div>
 
             <div className="text-right">
-              <p className="max-w-[180px] truncate text-xs text-zinc-500 md:max-w-xs">
+              <p className="text-xs text-zinc-500 truncate max-w-[120px] md:max-w-xs">
                 {user?.email}
               </p>
+
               <button
                 onClick={logout}
-                className="mt-2 rounded-xl border border-yellow-500/20 px-4 py-2 text-sm text-yellow-300 transition hover:bg-yellow-500/10"
+                className="mt-1 text-xs px-3 py-1 rounded-lg border border-yellow-500/20 text-yellow-300 hover:bg-yellow-500/10"
               >
                 Sair
               </button>
